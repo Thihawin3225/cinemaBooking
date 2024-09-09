@@ -23,24 +23,42 @@ $stmt->execute([':hall_id' => $hall_id, ':showtime_id' => $showtime_id]);
 $movieDetails = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Fetching seat details with prices and statuses
+// SQL query to fetch seat data
 $sql = "SELECT s.id, s.seat_number, s.row_number, rp.price, b.status
         FROM seats s
         LEFT JOIN bookings b ON s.id = b.seat_id AND b.showtime_id = :showtime_id
         LEFT JOIN rowandprice rp ON s.row_number = rp.row_number
         WHERE s.hall_id = :hall_id
         ORDER BY s.row_number, s.seat_number";
+        
+// Prepare and execute the SQL statement
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':hall_id' => $hall_id, ':showtime_id' => $showtime_id]);
 $seats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Grouping seats by row number
+// Print the raw data for debugging
+
+// Group seats by row number
 $groupedSeats = [];
 foreach ($seats as $seat) {
+    // Check if the row number already exists in the array
     if (!isset($groupedSeats[$seat['row_number']])) {
         $groupedSeats[$seat['row_number']] = [];
     }
+    // Add the seat to the appropriate row
     $groupedSeats[$seat['row_number']][] = $seat;
 }
+
+// Optional: Sort seats within each row by seat number if required
+foreach ($groupedSeats as $rowNumber => &$seats) {
+    usort($seats, function($a, $b) {
+        return $a['seat_number'] - $b['seat_number'];
+    });
+}
+
+// Optionally: Print the grouped and sorted data for verification
+
+
 
 $today = date('Y-m-d'); // Format: YYYY-MM-DD
 
@@ -57,6 +75,8 @@ function formatDate($date) {
         return date('n/j/y g:i A', strtotime($date)); // Display date and time if not today
     }
 }
+$shortDescription = substr($movieDetails['description'], 0, 150); // Show only the first 150 characters
+$fullDescription = $movieDetails['description'];
 ?>
 
 
@@ -70,21 +90,33 @@ function formatDate($date) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="move_detail.css">
+    <link rel="stylesheet" href="mo.css">
 </head>
+<style>
+    .hidden{
+        display: none;
+    }
+    .cinema-heading {
+    width: 100%; /* Make the image responsive to the container width */
+    max-width: 150px; /* Set a maximum width for the image */
+    height: auto; /* Maintain the aspect ratio of the image */
+    border-radius: 15px; /* Rounded corners for a smoother look */
+    display: block; /* Ensure image is a block element for alignment */
+}
 
+</style>
 <body>
     <div class="mainContainer">
         <nav class="nav-bar">
-            <h1>Cinema Booking</h1>
-            <ul>
+        <img src="./images/Screenshot_2024-09-08_163828-removebg-preview.png" class="cinema-heading" alt="">            
+        <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
-                <li><a href="#">Contact us</a></li>
+                <li><a href="./contactus/index.php">Contact us</a></li>
             </ul>
             <ul>
                 <?php if (!empty($_SESSION['userName'])) { ?>
-                    <li><a href="./admin/booking_success.php"><?php echo htmlspecialchars($_SESSION['userName']); ?></a></li>
+                    <li><a href="./booking_success.php"><?php echo htmlspecialchars($_SESSION['userName']); ?></a></li>
                     <li><a href="logout.php">Logout</a></li>
                 <?php } else { ?>
                     <li><a href="login.php">Login</a></li>
@@ -100,7 +132,13 @@ function formatDate($date) {
             <div class="right">
                 <div class="card">
                     <div class="title"><span>Title: </span><?php echo escape($movieDetails['name']); ?></div>
-                    <p><span>Description:</span> <?php echo escape($movieDetails['description']); ?></p>
+
+                    <p>
+    <span>Description:</span> 
+    <span id="shortDescription"><?php echo $shortDescription; ?>...<a href="#" id="toggleDescription" onclick="toggleDescription(event)">See More</a></span>
+    <span id="fullDescription" class="hidden"><?php echo $fullDescription; ?></span>
+</p>
+
                     <div><span>Release Date:</span> <?php echo escape($movieDetails['release_date']); ?></div>
                     <div><span>Duration: </span><?php echo escape($movieDetails['duration']); ?> minutes</div>
                     <div><span>Rating: </span><?php echo escape($movieDetails['rating']); ?></div>
@@ -121,7 +159,7 @@ function formatDate($date) {
                     <?php foreach ($groupedSeats as $row_number => $seatsInRow) { ?>
     <div class="row">
         <h1>Row <?php echo escape($row_number); ?></h1>
-        <div class="seats-container">
+        <div class="seats-container" style="gap: 20px;">
             <div class="seats-left" style="display: flex;">
                 <?php foreach (array_slice($seatsInRow, 0, ceil(count($seatsInRow) / 2)) as $seat) { ?>
                     <div class="seat">
@@ -236,6 +274,26 @@ function validateForm() {
     // Allow form submission if no errors
     return true;
 }
+function toggleDescription(event) {
+    event.preventDefault(); // Prevent the default action of the link
+    
+    var shortDescription = document.getElementById('shortDescription');
+    var fullDescription = document.getElementById('fullDescription');
+    var toggleLink = document.getElementById('toggleDescription');
+    
+    if (fullDescription.classList.contains('hidden')) {
+        // Show full description and hide short description
+        fullDescription.classList.remove('hidden');
+        shortDescription.style.display = 'none';
+        toggleLink.textContent = 'See Less'; // Change link text to "See Less"
+    } else {
+        // Show short description and hide full description
+        fullDescription.classList.add('hidden');
+        shortDescription.style.display = 'inline';
+        toggleLink.textContent = 'See More'; // Change link text to "See More"
+    }
+}
+
 </script>
 
 </body>

@@ -9,8 +9,65 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['login_time'])) {
     exit();
 }
 
-include('header.php');
+// Get the ID from the URL parameter
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+// Redirect if ID is invalid
+if ($id <= 0) {
+    header('Location: rowandprice_list.php');
+    exit();
+}
+
+// Fetch the current row and price data
+$sql = "SELECT * FROM rowandprice WHERE id = :id";
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Redirect if no record found
+if (!$row) {
+    header('Location: rowandprice_list.php');
+    exit();
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $row_number = $_POST['row_number'];
+    $price = $_POST['price'];
+    
+    // Basic validation
+    if (empty($row_number) || empty($price)) {
+        $error = "All fields are required.";
+    } else {
+        // Check if the row number already exists (excluding the current record)
+        $checkSql = "SELECT COUNT(*) FROM rowandprice WHERE row_number = :row_number AND id != :id";
+        $checkStmt = $pdo->prepare($checkSql);
+        $checkStmt->bindValue(':row_number', $row_number);
+        $checkStmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $checkStmt->execute();
+        $exists = $checkStmt->fetchColumn();
+        
+        if ($exists) {
+            $error = "Row number $row_number already exists.";
+        } else {
+            // Update the record
+            $sql = "UPDATE rowandprice SET row_number = :row_number, price = :price WHERE id = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':row_number', $row_number);
+            $stmt->bindValue(':price', $price);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            // Redirect to the list page
+            header('Location: rowandprice_manage.php');
+            exit();
+        }
+    }
+}
 ?>
+
+<?php include('header.php'); ?>
 
 <!-- Main content -->
 <div class="content">
@@ -19,81 +76,30 @@ include('header.php');
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Row and Price Listings</h3>
+                        <h3 class="card-title">Edit Row and Price</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <div>
-                            <a href="rowandprice_add.php" type="button" class="btn btn-success">New Row and Price</a>
-                        </div>
-                        <br>
-                        <?php
-                        // Pagination setup
-                        $pageno = isset($_GET['pageno']) ? (int)$_GET['pageno'] : 1;
-                        $numberOfrec = 10;
-                        $offset = ($pageno - 1) * $numberOfrec;
-
-                        // Fetch total records for pagination
-                        $rawsql = "SELECT * FROM rowandprice";
-                        $rawstmt = $pdo->prepare($rawsql);
-                        $rawstmt->execute();
-                        $totalRows = $rawstmt->fetchAll();
-                        $totalPages = ceil(count($totalRows) / $numberOfrec);
-
-                        // Fetch records for the current page
-                        $sql = "SELECT * FROM rowandprice LIMIT :offset, :numberOfrec";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-                        $stmt->bindValue(':numberOfrec', $numberOfrec, PDO::PARAM_INT);
-                        $stmt->execute();
-                        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        ?>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th>Row Number</th>
-                                    <th>Price</th>
-                                    <th style="width: 40px">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                if ($rows) {
-                                    $i = $offset + 1;
-                                    foreach ($rows as $row) {
-                                ?>
-                                <tr>
-                                    <td><?php echo $i; ?></td>
-                                    <td><?php echo escape($row['row_number']); ?></td>
-                                    <td><?php echo escape($row['price']); ?></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="rowandprice_edit.php?id=<?php echo $row['id']; ?>" type="button" class="btn btn-warning">Edit</a>
-                                            <a href="rowandprice_delete.php?id=<?php echo $row['id']; ?>" onclick="return confirm('Are you sure you want to delete this row price?')" type="button" class="btn btn-danger">Delete</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php
-                                    $i++;
-                                    }
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                        <br>
-                        <nav aria-label="Page navigation example" style="float:right">
-                            <ul class="pagination">
-                                <li class="page-item <?php if ($pageno <= 1) { echo 'disabled'; } ?>">
-                                    <a class="page-link" href="<?php if ($pageno > 1) { echo '?pageno=' . ($pageno - 1); } else { echo '#'; } ?>">Previous</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#"><?php echo $pageno; ?></a></li>
-                                <li class="page-item <?php if ($pageno >= $totalPages) { echo 'disabled'; } ?>">
-                                    <a class="page-link" href="<?php if ($pageno < $totalPages) { echo '?pageno=' . ($pageno + 1); } else { echo '#'; } ?>">Next</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="?pageno=<?php echo $totalPages; ?>">Last</a></li>
-                            </ul>
-                        </nav>
+                        <?php if (isset($error)): ?>
+                            <div class="alert alert-danger">
+                                <?php echo escape($error); ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <form method="post" action="">
+                            <input type="hidden" name="_token" value="<?php echo $_SESSION['_token'] ?>">
+                            <input type="hidden" name="_token" value="<?php echo $_SESSION["_token"];?>">
+                            <div class="form-group">
+                                <label for="row_number">Row Number</label>
+                                <input type="text" class="form-control" id="row_number" name="row_number" value="<?php echo escape($row['row_number']); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="text" class="form-control" id="price" name="price" value="<?php echo escape($row['price']); ?>" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <a href="rowandprice_manage.php" class="btn btn-secondary">Cancel</a>
+                        </form>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -105,5 +111,4 @@ include('header.php');
 </div>
 <!-- /.content -->
 
-<?php include('footer.html') ?>
- 
+<?php include('footer.html'); ?>

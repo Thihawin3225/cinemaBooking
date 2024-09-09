@@ -111,7 +111,7 @@ include('header.php');
                                     <option value="">Select Row</option>
                                     <?php foreach ($rows as $row) { ?>
                                         <option value="<?php echo htmlspecialchars($row['row_number']); ?>" <?php echo ($row['row_number'] == $row_number) ? 'selected' : ''; ?>>
-                                            Row <?php echo htmlspecialchars($row['row_number']); ?> - $<?php echo htmlspecialchars($row['price']); ?>
+                                            Row <?php echo htmlspecialchars($row['row_number']); ?> - MMK<?php echo htmlspecialchars($row['price']); ?>
                                         </option>
                                     <?php } ?>
                                 </select>

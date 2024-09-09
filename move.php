@@ -28,9 +28,8 @@ try {
         $filterSql = ' WHERE ' . implode(' AND ', $filterClauses);
     }
 
-    // Get today's date in Asia/Yangon timezone
-    $timezone = new DateTimeZone('Asia/Yangon');
-    $today = new DateTime('now', $timezone);
+    // Get today's date in default timezone
+    $today = new DateTime('now');
     $todayDate = $today->format('Y-m-d');
 
     // Fetch movies with showtimes and hall details
@@ -43,15 +42,14 @@ try {
             $filterSql";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    $allMovies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $allMovies = $stmt->fetchAll();
 
     // Separate movies into Now Showing and Coming Soon
     $nowShowingMovies = [];
     $comingSoonMovies = [];
     
     foreach ($allMovies as $movie) {
-        $startDateTime = new DateTime($movie['start_time'], new DateTimeZone('UTC'));
-        $startDateTime->setTimezone($timezone);
+        $startDateTime = new DateTime($movie['start_time']);
         $startDate = $startDateTime->format('Y-m-d');
 
         if ($startDate === $todayDate) {
@@ -67,10 +65,8 @@ try {
 
 // Function to format movie dates
 function formatDate($date) {
-    $timezone = new DateTimeZone('Asia/Yangon');
-    $dateTime = new DateTime($date, $timezone);
-    $dateTime->setTimezone($timezone);
-    $todayDate = (new DateTime('now', $timezone))->format('Y-m-d');
+    $dateTime = new DateTime($date);
+    $todayDate = (new DateTime('now'))->format('Y-m-d');
     
     $formattedDate = $dateTime->format('Y-m-d');
     if ($formattedDate === $todayDate) {
@@ -90,7 +86,7 @@ function formatDate($date) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="move.css">
+    <link rel="stylesheet" href="movie.css">
 
     <style>
         @media (min-width: 992px) {
@@ -98,22 +94,30 @@ function formatDate($date) {
                 max-width: 100vw !important;
             }
         }
+        .cinema-heading {
+    width: 100%; /* Make the image responsive to the container width */
+    max-width: 150px; /* Set a maximum width for the image */
+    height: auto; /* Maintain the aspect ratio of the image */
+    border-radius: 15px; /* Rounded corners for a smoother look */
+    display: block; /* Ensure image is a block element for alignment */
+}
+
     </style>
 </head>
 
 <body>
     <div class="mainContainer">
         <nav class="nav-bar">
-            <h1>Cinema Booking</h1>
-            <ul>
+        <img src="./images/Screenshot_2024-09-08_163828-removebg-preview.png" class="cinema-heading" alt="">           
+         <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
-                <li><a href="#">Contact us</a></li>
+                <li><a href="./contactus/index.php">Contact us</a></li>
             </ul>
             <ul>
                 <?php if (!empty($_SESSION['userName'])) { ?>
                     <li><a href="./booking_success.php"><?php echo htmlspecialchars($_SESSION['userName']); ?></a></li>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li><a href="ulogout.php">Logout</a></li>
                 <?php } else { ?>
                     <li><a href="login.php">Login</a></li>
                     <li><a href="register.php">Register</a></li>

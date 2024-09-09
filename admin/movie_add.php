@@ -50,7 +50,6 @@ if($_POST){
 
     if(empty($errors)){
         $imagePath = 'uploads/' . basename($image['name']);
-        
         if(move_uploaded_file($image['tmp_name'], $imagePath)){
             $sql = "INSERT INTO movies (name, description, release_date, duration, rating, genre, image) 
                     VALUES (:name, :description, :release_date, :duration, :rating, :genre, :image)";

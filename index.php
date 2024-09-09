@@ -96,7 +96,7 @@ function formatDate($date) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="move.css">
+    <link rel="stylesheet" href="movie.css">
 
     <style>
         @media (min-width: 992px) {
@@ -104,17 +104,50 @@ function formatDate($date) {
                 max-width: 100vw !important;
             }
         }
+        /* Style for the cinema heading image */
+.cinema-heading {
+    width: 100%; /* Make the image responsive to the container width */
+    max-width: 150px; /* Set a maximum width for the image */
+    height: auto; /* Maintain the aspect ratio of the image */
+    border-radius: 15px; /* Rounded corners for a smoother look */
+    display: block; /* Ensure image is a block element for alignment */
+}
+
+.simage{
+    box-sizing: border-box;
+    height: 240px;
+    display: block;
+    filter: brightness(1);
+    transition: filter .3s ease-in
+}
+
+
+
+/* Optional: Add responsive design for smaller screens */
+@media (max-width: 600px) {
+    .cinema-heading {
+        font-size: 2rem; /* Smaller font size on mobile */
+        padding: 5px; /* Reduced padding */
+    }
+}
+.slide_custom {
+    padding: 2rem;
+}
+.carousel-inner{
+    border-radius: 20px;
+}
+
     </style>
 </head>
 
 <body>
     <div class="mainContainer">
         <nav class="nav-bar">
-            <h1>Cinema Booking</h1>
+            <img src="./images/Screenshot_2024-09-08_163828-removebg-preview.png" class="cinema-heading" alt="">
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
-                <li><a href="#">Contact us</a></li>
+                <li><a href="./contactus/index.php">Contact us</a></li>
             </ul>
             <ul>
                 <?php if (!empty($_SESSION['userName'])) { ?>
@@ -126,29 +159,32 @@ function formatDate($date) {
                 <?php } ?>
             </ul>
         </nav>
+        <div id="carouselExample" class="carousel slide slide_custom">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+    <img src="./sliderimage/one.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+    <img src="./sliderimage/two.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+    <img src="./sliderimage/three.jpg" class="d-block w-100" alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
 
-        <div id="carouselExampleIndicators" class="carousel slide image-slider" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <?php foreach ($movies as $index => $movie) { ?>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="<?php echo $index; ?>" class="<?php echo $index === 0 ? 'active' : ''; ?>" aria-current="<?php echo $index === 0 ? 'true' : ''; ?>" aria-label="Slide <?php echo $index + 1; ?>"></button>
-                <?php } ?>
-            </div>
-            <div class="carousel-inner">
-                <?php foreach ($movies as $index => $movie) { ?>
-                    <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                        <img src="./admin/<?php echo escape($movie['image']); ?>" class="d-block w-100 simage" style="border-radius: 20px;" alt="Slide <?php echo $index + 1; ?>">
-                    </div>
-                <?php } ?>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
+
+
+
+
 
         <h1 class="category">Select Categories</h1>
 
@@ -204,7 +240,7 @@ function formatDate($date) {
                             <div class="card-detail">
                                 <div class="movie-rating">
                                 <h3 class="movie-name"><?php echo escape($movie['name']); ?></h3>
-                                    <span><?php echo escape($movie['rating']); ?></span>
+                                <span><i class="bi bi-star-fill"></i> <?php echo escape($movie['rating']); ?></span>
                                 </div>
                                 <div class="movie-dates">
                                     <p>Start Date: <span><?php echo escape(formatDate($movie['start_time'])); ?></span></p>

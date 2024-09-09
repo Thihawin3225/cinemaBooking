@@ -81,13 +81,31 @@
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
-  <style>
-    .nav-bar {
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+html{
+    font-family: sans-serif;
+}
+body{
+    font-family: "Poppins", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    font-weight: normal;
+    background: #fafafa;
+    color: #666666;
+}
+.nav-bar {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 20px;
-    background-color: #FFFFFF; /* Set background color */
+    padding: 10px;
+    background-color: #002970; /* Set background color */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
     position: sticky;
     top: 0;
@@ -96,7 +114,7 @@
 
 ul li a{
     text-decoration: none;
-    color: #333;
+    color: #fff;
     font-size: 20px;
     border-radius: 10px;
     padding: 10px 20px;
@@ -104,16 +122,40 @@ ul li a{
 ul li a:hover{
     background-color: #E0F5FD;
 }
+a {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent; }
+    a:hover {
+      color: #0056b3;
+       }
+  
+  a:not([href]):not([tabindex]) {
+    color: inherit;
+    text-decoration: none; }
+    a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
+      color: inherit;
+      text-decoration: none; }
+    a:not([href]):not([tabindex]):focus {
+      outline: 0; }
 .nav-bar ul{
     display: flex;
     align-items: center;
     gap: 40px;
     list-style: none;
 }
+.cinema-heading {
+    width: 100%; /* Make the image responsive to the container width */
+    max-width: 150px; /* Set a maximum width for the image */
+    height: auto; /* Maintain the aspect ratio of the image */
+    border-radius: 15px; /* Rounded corners for a smoother look */
+    display: block; /* Ensure image is a block element for alignment */
+}
+
   </style>
 <body>
 <nav class="nav-bar">
-            <h1>Cinema Booking</h1>
+<img src="./images/Screenshot_2024-09-08_163828-removebg-preview.png" class="cinema-heading" alt="">
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
@@ -132,7 +174,7 @@ ul li a:hover{
         <div class="hold-transition login-page" style="background-color: #F8F8F8;">
 <div class="login-box">
   <div class="login-logo">
-    <a href="index2.html"><b>Cinema Booking </b>Register</a>
+    <a href="index2.html">Register</a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
@@ -191,7 +233,7 @@ ul li a:hover{
           <!-- /.col -->
           <div class="col-4">
             <button type="submit" class="btn btn-primary btn-block">Register</button>
-            <a href="register.php" class="btn btn-primary btn-block">Login</a>
+            <a href="login.php" class="btn btn-primary btn-block">Login</a>
           </div>
          
           <!-- /.col -->

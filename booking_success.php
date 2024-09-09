@@ -57,23 +57,75 @@ function formatDate($date) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="move.css">
+    <link rel="stylesheet" href="mo.css">
     <style>
         @media (min-width: 992px) {
             .container, .container-lg, .container-md, .container-sm {
                 max-width: 100vw !important;
             }
         }
+
+        .booking-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .booking-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .booking-card-content {
+            padding: 15px;
+        }
+
+        .booking-card-header {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.25rem;
+        }
+
+        .booking-card-details {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .booking-card-details p {
+            margin: 0 0 10px;
+        }
+
+        .booking-card-details p strong {
+            font-weight: bold;
+        }
+
+        .booking-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .cinema-heading {
+    width: 100%; /* Make the image responsive to the container width */
+    max-width: 150px; /* Set a maximum width for the image */
+    height: auto; /* Maintain the aspect ratio of the image */
+    border-radius: 15px; /* Rounded corners for a smoother look */
+    display: block; /* Ensure image is a block element for alignment */
+}
     </style>
 </head>
 <body>
     <div class="mainContainer">
         <nav class="nav-bar">
-            <h1>Cinema Booking</h1>
+		<img src="./images/Screenshot_2024-09-08_163828-removebg-preview.png" class="cinema-heading" alt="">
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
-                <li><a href="#">Contact us</a></li>
+                <li><a href="./contactus/index.php">Contact us</a></li>
             </ul>
             <ul>
                 <?php if (!empty($_SESSION['userName'])) { ?>
@@ -85,30 +137,33 @@ function formatDate($date) {
                 <?php } ?>
             </ul>
         </nav>
+        <br>
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">My Bookings</h3>
+                        <div class="booking-card">
+                            <div class="booking-card-header">
+                                <h3>My Bookings</h3>
                             </div>
-                            <div class="card-body">
+                            <div class="booking-card-content">
                                 <?php if (count($bookings) > 0) { ?>
                                     <h4>Booking Details:</h4>
                                     <div class="row">
                                         <?php foreach ($bookings as $booking) { ?>
                                             <div class="col-md-4 mb-3">
-                                                <div class="card">
-                                                    <img src="./admin/<?php echo escape($booking['move_image']); ?>" style="height: 280px;" alt="Booking Image" class="card-img-top img-fluid">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title"><?php echo escape($booking['movie_name']); ?></h5>
-                                                        <p class="card-text">Hall: <?php echo escape($booking['hall_name']); ?></p>
-                                                        <p class="card-text">Seat: <?php echo escape($booking['seat_number']); ?> (Row <?php echo escape($booking['row_number']); ?>)</p>
-                                                        <p class="card-text">Price: $<?php echo escape($booking['price']); ?></p>
-                                                        <p class="card-text">Showtime: <?php echo escape(formatDate($booking['start_time'])); ?> - <?php echo escape(formatDate($booking['end_time'])); ?></p>
-                                                        <p class="card-text">Booking Time: <?php echo escape(($booking['booking_time'])); ?></p>
-                                                        <p class="card-text"><strong>Status:</strong> <?php echo escape($booking['status']); ?></p>
+                                                <div class="booking-card">
+                                                    <img src="./admin/<?php echo escape($booking['move_image']); ?>" alt="Booking Image">
+                                                    <div class="booking-card-content">
+                                                        <div class="booking-card-details">
+                                                            <p><strong>Movie:</strong> <?php echo escape($booking['movie_name']); ?></p>
+                                                            <p><strong>Hall:</strong> <?php echo escape($booking['hall_name']); ?></p>
+                                                            <p><strong>Seat:</strong> <?php echo escape($booking['seat_number']); ?> (Row <?php echo escape($booking['row_number']); ?>)</p>
+                                                            <p><strong>Price:</strong> $<?php echo escape($booking['price']); ?></p>
+                                                            <p><strong>Showtime:</strong> <?php echo escape(formatDate($booking['start_time'])); ?> - <?php echo escape(formatDate($booking['end_time'])); ?></p>
+                                                            <p><strong>Booking Time:</strong> <?php echo escape(($booking['booking_time'])); ?></p>
+                                                            <p><strong>Status:</strong> <?php echo escape($booking['status']); ?></p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -117,7 +172,6 @@ function formatDate($date) {
                                 <?php } else { ?>
                                     <p>No bookings found.</p>
                                 <?php } ?>
-                                <a href="../index.php" class="btn btn-primary mt-3">Back to Home</a>
                             </div>
                         </div>
                     </div>
@@ -127,3 +181,4 @@ function formatDate($date) {
     </div>
 </body>
 </html>
+

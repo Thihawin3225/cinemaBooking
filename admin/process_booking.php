@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $showtime_id = $_POST['showtime_id'];
     $seat_ids = $_POST['seat_ids'] ?? [];
     $booking_time = date('Y-m-d H:i:s');
-    $status = 'booked';
+    $status = 'pending';
     $image = '';
 
     // Validate showtime_id

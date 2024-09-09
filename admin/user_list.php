@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php
                         // Pagination setup
                         $pageno = isset($_GET['pageno']) ? (int)$_GET['pageno'] : 1;
-                        $numberOfrec = 1;
+                        $numberOfrec = 5;
                         $offset = ($pageno - 1) * $numberOfrec;
 
                         // Base SQL query with search condition
