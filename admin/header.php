@@ -33,10 +33,12 @@
 
 
     <!-- SEARCH FORM -->
-    <?php if($page == 'index.php' || $page == 'halls.php' || $page == 'showtimes.php' || $page == 'rowandprice_manage.php' || $page == 'seat_manage.php' || $page == 'booking_manage.php' || $page == 'user_list.php') {?>
+    <?php if($page == 'index.php' || $page == 'halls.php' || $page == 'booking_history.php' || $page == 'showtimes.php' || $page == 'rowandprice_manage.php' || $page == 'seat_manage.php' || $page == 'booking_manage.php' || $page == 'user_list.php') {?>
           <form class="form-inline ml-3" method="post"
           <?php if($page == 'index.php') :?>
             action="index.php"
+          <?php elseif($page == 'booking_history') :?>
+            action="booking_history.php"
           <?php elseif($page == 'halls.php'):?>
             action="halls.php"
           <?php elseif($page == 'seat_manage.php'):?>
@@ -148,32 +150,14 @@
                 Booking Manage
               </p>
             </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="weekly_report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Weekly Report</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="monthly_report.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Monthly Report</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="royal_user.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Royal Customers</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="best_seller.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Best Seller Items</p>
-                </a>
-              </li>
-            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="booking_history.php" class="nav-link">
+              <i class="nav-icon fas fa-dollar-sign"></i>
+              <p>
+                History
+              </p>
+            </a>
           </li>
 
         </ul>

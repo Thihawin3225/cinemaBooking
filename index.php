@@ -68,20 +68,17 @@ try {
     exit();
 }
 
-// Get today's date
-$today = date('Y-m-d'); // Format: YYYY-MM-DD
 
 // Function to format movie dates
-function formatDate($date) {
-    global $today;
-    // Convert the date to YYYY-MM-DD format for comparison
-    $formattedDate = date('Y-m-d', strtotime($date));
-
-    // Check if the date is today
-    if ($formattedDate === $today) {
-        return 'Today ' . date('g:i A', strtotime($date)); // Display time if today
+function formatDate($date, $timezone = 'Asia/Yangon') {
+    $dateTime = new DateTime($date, new DateTimeZone($timezone));
+    $todayDate = (new DateTime('now', new DateTimeZone($timezone)))->format('Y-m-d');
+    
+    $formattedDate = $dateTime->format('Y-m-d');
+    if ($formattedDate === $todayDate) {
+        return 'Today ' . $dateTime->format('g:i A');
     } else {
-        return date('n/j/y g:i A', strtotime($date)); // Display date and time if not today
+        return $dateTime->format('n/j/y g:i A');
     }
 }
 ?>
@@ -96,9 +93,10 @@ function formatDate($date) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="movie.css">
+    <link rel="stylesheet" href="movies.css">
 
     <style>
+       
         @media (min-width: 992px) {
             .container, .container-lg, .container-md, .container-sm {
                 max-width: 100vw !important;
@@ -155,7 +153,7 @@ function formatDate($date) {
                     <li><a href="ulogout.php">Logout</a></li>
                 <?php } else { ?>
                     <li><a href="login.php">Login</a></li>
-                    <li><a href="register.php">Register</a></li>
+                    <li><a href="login.php">Register</a></li>
                 <?php } ?>
             </ul>
         </nav>
@@ -180,11 +178,6 @@ function formatDate($date) {
     <span class="visually-hidden">Next</span>
   </button>
 </div>
-
-
-
-
-
 
         <h1 class="category">Select Categories</h1>
 
@@ -247,7 +240,31 @@ function formatDate($date) {
                                     <p>End Date: <span><?php echo escape(formatDate($movie['end_time'])); ?></span></p>
                                 </div>
                             </div>
-                            <a href="movedetail.php?showtime_id=<?php echo $movie['showtime_id']; ?>&hall_id=<?php echo $movie['hall_id']; ?>" class="btn btn-primary">Book Ticket</a>
+                            <?php
+// Initialize DateTime objects with proper time zone
+
+$timezone = new DateTimeZone('Asia/Yangon'); // e.g., 'America/New_York', 'Europe/Berlin'
+$today = new DateTime('now', $timezone);
+$currentTimestamp = $today->getTimestamp(); // Get current timestamp
+
+// Example movie start time
+$movieStartTimeStr = $movie['start_time']; // Ensure this is in a valid DateTime format
+$startDateTime = new DateTime($movieStartTimeStr, $timezone);
+$startTimestamp = $startDateTime->getTimestamp(); // Get movie start timestamp
+
+// Compare timestamps and display appropriate button
+if ($startTimestamp >= $currentTimestamp) {
+    // Movie start time is in the past or now
+    ?>
+    <a href="movedetail.php?showtime_id=<?php echo htmlspecialchars($movie['showtime_id']); ?>&hall_id=<?php echo htmlspecialchars($movie['hall_id']); ?>" class="btn btn-primary">Book Now</a>
+    <?php
+} else {
+    // Movie start time is in the future
+    ?>
+    <a href="" class="btn btn-secondary">Close</a>
+    <?php
+}
+?>
                         </div>
                     <?php } ?>
                 <?php } else { ?>

@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require 'config/config.php';
@@ -27,9 +28,10 @@ try {
     if (!empty($filterClauses)) {
         $filterSql = ' WHERE ' . implode(' AND ', $filterClauses);
     }
-
+     
+    $timezone = new DateTimeZone('Asia/Yangon'); // e.g., 'America/New_York', 'Europe/Berlin'
     // Get today's date in default timezone
-    $today = new DateTime('now');
+    $today = new DateTime('now',$timezone);
     $todayDate = $today->format('Y-m-d');
 
     // Fetch movies with showtimes and hall details
@@ -64,9 +66,9 @@ try {
 }
 
 // Function to format movie dates
-function formatDate($date) {
-    $dateTime = new DateTime($date);
-    $todayDate = (new DateTime('now'))->format('Y-m-d');
+function formatDate($date, $timezone = 'Asia/Yangon') {
+    $dateTime = new DateTime($date, new DateTimeZone($timezone));
+    $todayDate = (new DateTime('now', new DateTimeZone($timezone)))->format('Y-m-d');
     
     $formattedDate = $dateTime->format('Y-m-d');
     if ($formattedDate === $todayDate) {
@@ -75,6 +77,7 @@ function formatDate($date) {
         return $dateTime->format('n/j/y g:i A');
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,7 +89,7 @@ function formatDate($date) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="movie.css">
+    <link rel="stylesheet" href="movies.css">
 
     <style>
         @media (min-width: 992px) {
@@ -143,7 +146,31 @@ function formatDate($date) {
                                         <p>End Date: <span><?php echo htmlspecialchars(formatDate($movie['end_time'])); ?></span></p>
                                     </div>
                                 </div>
-                                <a href="movedetail.php?showtime_id=<?php echo $movie['showtime_id']; ?>&hall_id=<?php echo $movie['hall_id']; ?>" class="btn btn-primary">Book Now</a>
+                                <?php
+// Initialize DateTime objects with proper time zone
+
+$timezone = new DateTimeZone('Asia/Yangon'); // e.g., 'America/New_York', 'Europe/Berlin'
+$today = new DateTime('now', $timezone);
+$currentTimestamp = $today->getTimestamp(); // Get current timestamp
+// Example movie start time
+$movieStartTimeStr = $movie['start_time']; // Ensure this is in a valid DateTime format
+$startDateTime = new DateTime($movieStartTimeStr, $timezone);
+$startTimestamp = $startDateTime->getTimestamp(); // Get movie start timestamp
+
+// Compare timestamps and display appropriate button
+if ($startTimestamp >= $currentTimestamp) {
+    // Movie start time is in the past or now
+    ?>
+    <a href="movedetail.php?showtime_id=<?php echo htmlspecialchars($movie['showtime_id']); ?>&hall_id=<?php echo htmlspecialchars($movie['hall_id']); ?>" class="btn btn-primary">Book Now</a>
+    <?php
+} else {
+    // Movie start time is in the future
+    ?>
+    <a href="" class="btn btn-secondary">Close</a>
+    <?php
+}
+?>
+
                             </div>
                     <?php } ?>
                 <?php } else { ?>

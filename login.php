@@ -41,7 +41,6 @@ if(!empty($_POST)){
   <!-- Theme style -->
   <link rel="stylesheet" href="./admin/dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -62,11 +61,14 @@ body{
     background: #fafafa;
     color: #666666;
 }
+ul{
+  margin-bottom: 0;
+}
 .nav-bar {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 10px 20px;
     background-color: #002970; /* Set background color */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
     position: sticky;
@@ -121,7 +123,7 @@ a {
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
-                <li><a href="#">Contact us</a></li>
+                <li><a href="./contactus/index.php">Contact us</a></li>
             </ul>
             <ul>
                 <?php if (!empty($_SESSION['userName'])) { ?>

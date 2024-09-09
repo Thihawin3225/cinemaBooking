@@ -95,16 +95,18 @@ html{
 body{
     font-family: "Poppins", Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.8;
     font-weight: normal;
     background: #fafafa;
     color: #666666;
 }
+ul{
+  margin-bottom: 0;
+}
 .nav-bar {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 10px 20px;
     background-color: #002970; /* Set background color */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
     position: sticky;
@@ -159,7 +161,7 @@ a {
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="move.php">Movies</a></li>
-                <li><a href="#">Contact us</a></li>
+                <li><a href="./contactus/index.php">Contact us</a></li>
             </ul>
             <ul>
                 <?php if (!empty($_SESSION['userName'])) { ?>

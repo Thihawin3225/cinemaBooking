@@ -40,11 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "File is not an image.";
             exit();
         }
-        // Check if file already exists
-        // if (file_exists($target_file)) {
-        //     echo "Sorry, file already exists.";
-        //     exit();
-        // }
 
         // Check file size
         if ($_FILES["image"]["size"] > 5000000) { // 5MB limit
@@ -73,17 +68,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->beginTransaction();
         try {
             foreach ($seat_ids as $seat_id) {
-                $sql = "INSERT INTO bookings (user_id, showtime_id, seat_id, booking_time, status, image) 
-                        VALUES (:user_id, :showtime_id, :seat_id, :booking_time, :status, :image)";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    ':user_id' => $user_id,
+                // Check if the seat is already booked
+                $check_sql = "SELECT * FROM bookings WHERE showtime_id = :showtime_id AND seat_id = :seat_id";
+                $check_stmt = $pdo->prepare($check_sql);
+                $check_stmt->execute([
                     ':showtime_id' => $showtime_id,
-                    ':seat_id' => $seat_id,
-                    ':booking_time' => $booking_time,
-                    ':status' => $status,
-                    ':image' => $image
+                    ':seat_id' => $seat_id
                 ]);
+                $existing_booking = $check_stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($existing_booking) {
+                    // Update the booking if it exists
+                    $update_sql = "UPDATE bookings SET user_id = :user_id, booking_time = :booking_time, status = :status, image = :image 
+                                   WHERE showtime_id = :showtime_id AND seat_id = :seat_id";
+                    $update_stmt = $pdo->prepare($update_sql);
+                    $update_stmt->execute([
+                        ':user_id' => $user_id,
+                        ':booking_time' => $booking_time,
+                        ':status' => $status,
+                        ':image' => $image,
+                        ':showtime_id' => $showtime_id,
+                        ':seat_id' => $seat_id
+                    ]);
+                } else {
+                    // Insert the booking if it does not exist
+                    $insert_sql = "INSERT INTO bookings (user_id, showtime_id, seat_id, booking_time, status, image) 
+                                   VALUES (:user_id, :showtime_id, :seat_id, :booking_time, :status, :image)";
+                    $insert_stmt = $pdo->prepare($insert_sql);
+                    $insert_stmt->execute([
+                        ':user_id' => $user_id,
+                        ':showtime_id' => $showtime_id,
+                        ':seat_id' => $seat_id,
+                        ':booking_time' => $booking_time,
+                        ':status' => $status,
+                        ':image' => $image
+                    ]);
+                }
             }
             $pdo->commit();
             echo "<script>alert('Booking is Pending');window.location.href = '../booking_success.php';</script>";
