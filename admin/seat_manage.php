@@ -62,8 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     LEFT JOIN halls h ON s.hall_id = h.id";
                         if ($searchKey) {
                             $baseSql .= " WHERE h.name LIKE :searchKey
-                                          OR s.seat_number LIKE :searchKey
-                                          OR s.row_number LIKE :searchKey";
+                                          OR s.seat_number LIKE :searchKey";
                         }
 
                         // Count total records for pagination

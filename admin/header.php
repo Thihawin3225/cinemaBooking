@@ -33,7 +33,7 @@
 
 
     <!-- SEARCH FORM -->
-    <?php if($page == 'index.php' || $page == 'halls.php' || $page == 'booking_history.php' || $page == 'showtimes.php' || $page == 'rowandprice_manage.php' || $page == 'seat_manage.php' || $page == 'booking_manage.php' || $page == 'user_list.php') {?>
+    <?php if($page == 'index.php' || $page == 'halls.php' || $page == 'booking_history.php' || $page == 'showtimes.php' || $page == 'rowandprice_manage.php' || $page == 'seat_manage.php' ||$page == 'user_list.php') {?>
           <form class="form-inline ml-3" method="post"
           <?php if($page == 'index.php') :?>
             action="index.php"
@@ -43,8 +43,6 @@
             action="halls.php"
           <?php elseif($page == 'seat_manage.php'):?>
             action="seat_manage.php"
-          <?php elseif($page == 'booking_manage'):?>
-            action="booking_manage.php"
           <?php elseif($page == 'rowandprice_manage'):?>
             action="rowandprice_manage.php"
           <?php elseif($page == 'showtimes.php'):?>
@@ -53,7 +51,24 @@
           >
             <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
             <div class="input-group input-group-sm">
-              <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <input name="search" class="form-control form-control-navbar" type="search"
+               <?php if($page == 'index.php') :?>
+                placeholder="Search by name or genre"
+                <?php elseif($page == 'showtimes.php') :?>
+                  placeholder="Search by movie or hall"
+                <?php elseif($page == 'seat_manage.php'):?>
+                  placeholder="Search by hall or seat "
+                  <?php elseif($page == 'rowandprice_manage.php'):?>
+                    placeholder="Search by rownumber"
+                    <?php elseif($page == 'user_list.php'):?>
+                    placeholder="Search by name or email"
+                    <?php elseif($page == 'halls.php'):?>
+                    placeholder="Search by hall name"
+                     <?php elseif($page == 'booking_history.php'):?>
+                    placeholder="Search by move name"
+                    
+                <?php endif;?>
+                action="index.php" aria-label="Search">
               <div class="input-group-append">
                 <button class="btn btn-navbar" type="submit">
                   <i class="fas fa-search"></i>

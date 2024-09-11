@@ -1,24 +1,29 @@
 <?php
-    session_start();
-    require '../config/config.php';
-    require '../config/common.php';
-    if(empty($_SESSION['user_id']) && empty($_SESSION['login_time'])){
-      header('Location: login.php');
-      exit();
-    }
+session_start();
+require '../config/config.php';
+require '../config/common.php';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        setcookie('search', $_POST['search'], time() + (86400 * 30), "/");
-    } else {
-        if (empty($_GET['pageno'])) {
-            unset($_COOKIE['search']); 
-            setcookie('search', null, -1, '/'); 
-        }
-    }
+// Check if the user is logged in
+if (empty($_SESSION['user_id']) || empty($_SESSION['login_time'])) {
+    header('Location: login.php');
+    exit();
+}
 
-    include('header.php');
+// Handle search query
+$searchKey = isset($_POST['search']) ? trim($_POST['search']) : '';
+$searchKey = htmlspecialchars($searchKey, ENT_QUOTES, 'UTF-8'); // Sanitize input
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    setcookie('search', $searchKey, time() + (86400 * 30), "/");
+} else {
+    if (empty($_GET['pageno'])) {
+        setcookie('search', '', time() - 3600, '/'); // Clear cookie
+    }
+}
+
+// Fetch the search term from cookie
+$searchKey = isset($_COOKIE['search']) ? $_COOKIE['search'] : $searchKey;
 ?>
-
+<?php include('header.php') ?>
 <!-- Main content -->
 <div class="content">
     <div class="container-fluid">
@@ -35,41 +40,43 @@
                         </div>
                         <br>
                         
+                       
                         <br>
+                       
                         <?php
-                          if(!empty($_GET['pageno'])){
-                            $pageno = $_GET['pageno'];
-                          }else{
-                            $pageno = 1;
-                          }
-                          $numberOfrec = 10;
-                          $offset = ($pageno-1) * $numberOfrec;
+                        // Pagination setup
+                        $pageno = isset($_GET['pageno']) ? (int)$_GET['pageno'] : 1;
+                        $numOfrecs = 10;
+                        $offset = ($pageno - 1) * $numOfrecs;
 
-                          if (empty($_POST['search']) && empty($_COOKIE['search'])) {
-                              $sql = "SELECT * FROM Halls";
-                              $stmt = $pdo->prepare($sql);
-                              $stmt->execute();
-                              $rawhalls = $stmt->fetchAll();
-                          } else {
-                              $searchKey = isset($_POST['search']) ? $_POST['search'] : $_COOKIE['search'];
-                              $sql = "SELECT * FROM Halls WHERE name LIKE :searchKey";
-                              $stmt = $pdo->prepare($sql);
-                              $stmt->execute([':searchKey' => '%' . $searchKey . '%']);
-                              $rawhalls = $stmt->fetchAll();
-                          }
+                        // Base SQL query
+                        $baseSql = "SELECT * FROM Halls";
+                        if ($searchKey) {
+                            $baseSql .= " WHERE name LIKE :searchKey";
+                        }
 
-                          $totalPages = ceil(count($rawhalls) / $numberOfrec);
+                        // Count total records for pagination
+                        $countSql = $baseSql;
+                        $countStmt = $pdo->prepare($countSql);
+                        if ($searchKey) {
+                            $countStmt->bindValue(':searchKey', "%$searchKey%", PDO::PARAM_STR);
+                        }
+                        $countStmt->execute();
+                        $totalCount = $countStmt->rowCount();
+                        $totalPages = ceil($totalCount / $numOfrecs);
 
-                          $sql = "SELECT * FROM Halls LIMIT $offset,$numberOfrec";
-                          if (!empty($searchKey)) {
-                              $sql = "SELECT * FROM Halls WHERE name LIKE :searchKey LIMIT $offset,$numberOfrec";
-                              $stmt = $pdo->prepare($sql);
-                              $stmt->execute([':searchKey' => '%' . $searchKey . '%']);
-                          } else {
-                              $stmt = $pdo->prepare($sql);
-                              $stmt->execute();
-                          }
-                          $halls = $stmt->fetchAll();
+                        // Fetch records for the current page
+                        $pagedSql = $baseSql . " LIMIT :offset, :numOfrecs";
+                        $stmt = $pdo->prepare($pagedSql);
+                        if ($searchKey) {
+                            $stmt->bindValue(':searchKey', "%$searchKey%", PDO::PARAM_STR);
+                        }
+                        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                        $stmt->bindValue(':numOfrecs', $numOfrecs, PDO::PARAM_INT);
+                        $stmt->execute();
+                        $halls = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        $id = $offset + 1;
                         ?>
                         <table class="table table-bordered">
                             <thead>
@@ -82,46 +89,51 @@
                             </thead>
                             <tbody>
                                 <?php
-                                if($halls){
-                                  $i = 1;
-                                  foreach($halls as $value){ 
-                                    ?>
-                                  
-                                  <tr>
-                                    <td><?php echo $i; ?></td>
-                                    <td><?php echo escape($value['name']);?></td>
-                                    <td><?php echo escape($value['capacity']); ?></td>
-                                   <td>
+                                if ($halls) {
+                                    foreach ($halls as $hall) {
+                                ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($id); ?></td>
+                                    <td><?php echo htmlspecialchars($hall['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($hall['capacity']); ?></td>
+                                    <td>
                                         <div class="btn-group">
-                                          <div class="container">
-                                            <a href="hall_edit.php?id=<?php echo $value['id']?>" type="button" class="btn btn-warning">Edit</a>
-                                          </div>
-                                          <div class="container">
-                                            <a href="hall_delete.php?id=<?php echo $value['id']?>"
-                                              onclick="return confirm('Are you sure you want to delete this hall?')"
-                                              type="button" class="btn btn-danger">Delete</a>
-                                          </div>
+                                            <a href="hall_edit.php?id=<?php echo htmlspecialchars($hall['id']); ?>" type="button" class="btn btn-warning">Edit</a>
+                                            <a href="hall_delete.php?id=<?php echo htmlspecialchars($hall['id']); ?>"
+                                               onclick="return confirm('Are you sure you want to delete this hall?')"
+                                               type="button" class="btn btn-danger">Delete</a>
                                         </div>
-                                      </td>
-                                    </tr>
+                                    </td>
+                                </tr>
                                 <?php
-                                $i++;
-                                  }
+                                        $id++;
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='4'>No records found</td></tr>";
                                 }
                                 ?>
                             </tbody>
-                        </table><br>
+                        </table>
+                        <br>
                         <nav aria-label="Page navigation example" style="float:right">
                             <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="?pageno=1">First</a></li>
-                                <li class="page-item <?php if($pageno <= 1){echo 'disabled';}else{echo "";} ?>">
-                                    <a class="page-link" href="<?php if($pageno <= 1){ echo '#';} else { echo '?pageno='.($pageno-1);} ?>">Previous</a>
+                                <li class="page-item <?php if ($pageno <= 1) { echo 'disabled'; } ?>">
+                                    <a class="page-link" href="?pageno=1<?php echo $searchKey ? '&search=' . urlencode($searchKey) : ''; ?>">First</a>
                                 </li>
-                                <li class="page-item"><a class="page-link" href="#"><?php echo $pageno; ?></a></li>
-                                <li class="page-item <?php if($pageno >= $totalPages){echo 'disabled';}else{echo "";} ?>">
-                                    <a class="page-link" href="<?php if($pageno >= $totalPages){ echo $totalPages;} else { echo '?pageno='.($pageno+1);} ?>">Next</a>
+                                <li class="page-item <?php if ($pageno <= 1) { echo 'disabled'; } ?>">
+                                    <a class="page-link" href="<?php if ($pageno > 1) { echo '?pageno=' . ($pageno - 1) . ($searchKey ? '&search=' . urlencode($searchKey) : ''); } else { echo '#'; } ?>">Previous</a>
                                 </li>
-                                <li class="page-item"><a class="page-link" href="?pageno=<?php echo $totalPages ?>" >Last</a></li>
+                                <?php for ($page = 1; $page <= $totalPages; $page++) { ?>
+                                    <li class="page-item <?php if ($pageno == $page) { echo 'active'; } ?>">
+                                        <a class="page-link" href="?pageno=<?php echo $page; ?><?php echo $searchKey ? '&search=' . urlencode($searchKey) : ''; ?>"><?php echo $page; ?></a>
+                                    </li>
+                                <?php } ?>
+                                <li class="page-item <?php if ($pageno >= $totalPages) { echo 'disabled'; } ?>">
+                                    <a class="page-link" href="<?php if ($pageno < $totalPages) { echo '?pageno=' . ($pageno + 1) . ($searchKey ? '&search=' . urlencode($searchKey) : ''); } else { echo '#'; } ?>">Next</a>
+                                </li>
+                                <li class="page-item <?php if ($pageno >= $totalPages) { echo 'disabled'; } ?>">
+                                    <a class="page-link" href="?pageno=<?php echo $totalPages; ?><?php echo $searchKey ? '&search=' . urlencode($searchKey) : ''; ?>">Last</a>
+                                </li>
                             </ul>
                         </nav>
                     </div>
@@ -134,4 +146,4 @@
     </div><!-- /.container-fluid -->
 </div>
 <!-- /.content -->
-<?php include('footer.html')?>
+<?php include('footer.html') ?>
