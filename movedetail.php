@@ -44,6 +44,7 @@ foreach ($seats as $seat) {
     $groupedSeats[$seat['row_number']][] = $seat;
 }
 
+
 // Sort seats within each row by seat number
 foreach ($groupedSeats as $rowNumber => &$seats) {
     usort($seats, function($a, $b) {
@@ -90,7 +91,7 @@ $fullDescription = $movieDetails['description'];
     </style>
 </head>
 <body>
-    <div class="mainContainer">
+    <div class="mainContainer" style="margin-bottom:10px;">
         <nav class="nav-bar">
             <img src="./images/Screenshot_2024-09-08_163828-removebg-preview.png" class="cinema-heading" alt="">            
             <ul>
@@ -227,6 +228,8 @@ $fullDescription = $movieDetails['description'];
             <div id="error-message" style="color: red; display: none;"></div>
         </div>
     </div>
+    <?php include('footer.html') ?>
+
 
     <script>
     function calculateTotal() {

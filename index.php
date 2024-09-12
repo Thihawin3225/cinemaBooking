@@ -46,7 +46,7 @@ try {
         JOIN halls h ON s.hall_id = h.id
         WHERE s.start_time >= CURDATE() 
         $filterSql
-        ORDER BY RAND()";
+        ORDER BY s.start_time Asc";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -178,9 +178,7 @@ function formatDate($date, $timezone = 'Asia/Yangon') {
     <span class="visually-hidden">Next</span>
   </button>
 </div>
-
         <h1 class="category">Select Categories</h1>
-
         <div class="container">
             <div class="cleft">
                     <form method="GET" action="">
@@ -195,7 +193,6 @@ function formatDate($date, $timezone = 'Asia/Yangon') {
                                 <?php } ?>
                             </div>
                         </div>
-
                         <button id="genreButton" type="button" class="cbtn">Genre <i class="bi bi-chevron-down"></i></button>
                         <div id="genreContainer" class="btn">
                             <div class="filter-group">
@@ -243,7 +240,7 @@ function formatDate($date, $timezone = 'Asia/Yangon') {
                             <?php
 // Initialize DateTime objects with proper time zone
 
-$timezone = new DateTimeZone('Asia/Yangon'); // e.g., 'America/New_York', 'Europe/Berlin'
+$timezone = new DateTimeZone('Asia/Yangon'); 
 $today = new DateTime('now', $timezone);
 $currentTimestamp = $today->getTimestamp(); // Get current timestamp
 
@@ -272,11 +269,10 @@ if ($startTimestamp >= $currentTimestamp) {
                 <?php } ?>
             </div>
         </div>
-
-        <div class="foter">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        <?php include('footer.html') ?>
         </div>
-    </div>
+        
+
 </body>
 
 </html>

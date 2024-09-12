@@ -16,7 +16,7 @@ if ($_POST) {
         empty($_POST['release_date']) || empty($_POST['duration']) || !is_numeric($_POST['duration']) || 
         empty($_POST['rating']) || !is_numeric($_POST['rating'])) {
         
-        if (empty($_POST['name'])) {
+        if(empty($_POST['name'])) {
             $nameError = "Name is required";
         }
         if (empty($_POST['description'])) {

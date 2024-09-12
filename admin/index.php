@@ -14,7 +14,7 @@ if($_SESSION['role'] !=1){
 
 // Handle search query
 $searchKey = isset($_POST['search']) ? trim($_POST['search']) : '';
-$searchKey = htmlspecialchars($searchKey, ENT_QUOTES, 'UTF-8'); // Sanitize input
+$searchKey = escape($searchKey, ENT_QUOTES, 'UTF-8'); // Sanitize input
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     setcookie('search', $searchKey, time() + (86400 * 30), "/");
 } else {
@@ -101,24 +101,24 @@ $searchKey = isset($_COOKIE['search']) ? $_COOKIE['search'] : $searchKey;
                                     foreach ($movies as $movie) {
                                 ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($id); ?></td>
-                                    <td><?php echo htmlspecialchars($movie['name']); ?></td>
+                                    <td><?php echo escape($id); ?></td>
+                                    <td><?php echo escape($movie['name']); ?></td>
                                     <td>
                                     <?php
-                                     $description = htmlspecialchars($movie['description']);
+                                     $description = escape($movie['description']);
                                      echo strlen($description) > 50 ? substr($description, 0, 50) . '...' : $description;
                                      ?>
                                     </td>
 
-                                    <td><?php echo htmlspecialchars($movie['genre']); ?></td>
-                                    <td><?php echo htmlspecialchars($movie['release_date']); ?></td>
-                                    <td><?php echo htmlspecialchars($movie['duration']); ?> mins</td>
-                                    <td><?php echo htmlspecialchars($movie['rating']); ?></td>
-                                    <td><img src="<?php echo htmlspecialchars($movie['image']); ?>" alt="Movie Image" style="width:100px;height:100px;"></td>
+                                    <td><?php echo escape($movie['genre']); ?></td>
+                                    <td><?php echo escape($movie['release_date']); ?></td>
+                                    <td><?php echo escape($movie['duration']); ?> mins</td>
+                                    <td><?php echo escape($movie['rating']); ?></td>
+                                    <td><img src="<?php echo escape($movie['image']); ?>" alt="Movie Image" style="width:100px;height:100px;"></td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="movie_edit.php?id=<?php echo htmlspecialchars($movie['id']); ?>" type="button" class="btn btn-warning">Edit</a>
-                                            <a href="movie_delete.php?id=<?php echo htmlspecialchars($movie['id']); ?>"
+                                            <a href="movie_edit.php?id=<?php echo escape($movie['id']); ?>" type="button" class="btn btn-warning">Edit</a>
+                                            <a href="movie_delete.php?id=<?php echo escape($movie['id']); ?>"
                                                onclick="return confirm('Are you sure you want to delete this movie?')"
                                                type="button" class="btn btn-danger">Delete</a>
                                         </div>

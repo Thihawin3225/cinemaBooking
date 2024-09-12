@@ -181,7 +181,10 @@ a {
     <!-- /.login-card-body -->
   </div>
 </div>
+
   </div>
+  <?php include('footer.html') ?>
+
 <!-- /.login-box -->
 
 <!-- jQuery -->

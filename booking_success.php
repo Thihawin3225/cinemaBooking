@@ -179,6 +179,7 @@ function formatDate($date) {
             </div>
         </div>
     </div>
+    <?php include('footer.html') ?>
 </body>
 </html>
 

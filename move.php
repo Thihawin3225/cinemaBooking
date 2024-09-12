@@ -205,10 +205,10 @@ if ($startTimestamp >= $currentTimestamp) {
             </div>
            </div>
 
-        <div class="footer">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </div>
+        
     </div>
+    <?php include('footer.html') ?>
+
 </body>
 
 </html>
