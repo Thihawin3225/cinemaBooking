@@ -101,6 +101,9 @@ $id = $offset + 1;
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
+                    <div>
+                            <a href="deleteAll.php"  onclick="return confirm('Are you sure you want to cancel this booking?')" type="button" class="btn btn-success">Delete All</a>
+                        </div>
                         <br>
                         
                         <br>

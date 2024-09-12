@@ -13,7 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hall_id = $_POST['hall_id'];
     $showtime_id = $_POST['showtime_id'];
     $seat_ids = $_POST['seat_ids'] ?? [];
-    $booking_time = date('Y-m-d H:i:s');
+    date_default_timezone_set('Asia/Yangon');
+
+// Create a new DateTime object for the current time
+$now = new DateTime('now', new DateTimeZone('Asia/Yangon'));
+
+// Format the current time as needed
+$currentTimestamp = $now->format('Y-m-d H:i:s'); 
+    $booking_time = $currentTimestamp;
     $status = 'pending';
     $image = '';
 

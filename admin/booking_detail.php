@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Yangon');
 session_start();
 require '../config/config.php';
 require '../config/common.php';
@@ -70,7 +71,12 @@ if (!$booking) {
                             <dd class="col-sm-9"><?php echo escape((new DateTime($booking['end_time']))->format('d/m/Y g:i A')); ?></dd>
 
                             <dt class="col-sm-3">Booking Time</dt>
-                            <dd class="col-sm-9"><?php echo escape((new DateTime($booking['booking_time']))->format('d/m/Y g:i A')); ?></dd>
+                            <?php 
+                                // Convert booking time to 'Asia/Yangon'
+                                $bookingTime = new DateTime($booking['booking_time'], new DateTimeZone('UTC'));
+                                $bookingTime->setTimezone(new DateTimeZone('Asia/Yangon'));
+                                ?>
+                            <dd class="col-sm-9"><?php echo escape($bookingTime->format('d/m/Y')); ?></dd>
 
                             <dt class="col-sm-3">Status</dt>
                             <dd class="col-sm-9"><?php echo escape($booking['status']); ?></dd>

@@ -43,7 +43,7 @@ include('header.php');
                         $baseSql = "SELECT showtimes.*, movies.name as movie_name, halls.name as hall_name
                                     FROM showtimes
                                     JOIN movies ON showtimes.movie_id = movies.id
-                                    JOIN halls ON showtimes.hall_id = halls.id";
+                                    JOIN halls ON showtimes.hall_id = halls.id order by showtimes.start_time asc";
                         if ($searchKey) {
                             $baseSql .= " WHERE movies.name LIKE :searchKey OR halls.name LIKE :searchKey";
                         }
