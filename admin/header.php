@@ -1,3 +1,16 @@
+<?php 
+
+$status='pending';
+$sql="select count(*) as statuscount from bookings where status=:status";
+$stmt=$pdo->prepare($sql);
+$stmt->execute(
+  array(
+    ':status'=>$status
+  )
+); 
+$staresult=$stmt->fetchAll();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>AP Shopping</title>
+  <title>STARLIGHT CINEMA</title>
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
@@ -14,6 +27,14 @@
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
+<style>
+  .sta{
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: red;
+    
+  }
+</style>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
 
@@ -88,7 +109,7 @@
     <a href="index3.html" class="brand-link">
       <img src="../images/download.jpg" alt="Cinema Booking Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
-      <span class="brand-text font-weight-light">Cinema Booking</span>
+      <span class="brand-text font-weight-light">STARLIGHT CINEMA</span>
     </a>
 
     <!-- Sidebar -->
@@ -162,7 +183,10 @@
             <a href="booking_manage.php" class="nav-link">
               <i class="nav-icon fas fa-calendar-check"></i>
               <p>
-                Booking Manage
+                Booking Manage 
+                <?php if($staresult[0]['statuscount'] >0){  ?>
+                  <span class="sta"><?php echo $staresult[0]['statuscount']; ?></span>
+                  <?php } ?>
               </p>
             </a>
           </li>

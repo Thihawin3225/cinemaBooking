@@ -144,7 +144,7 @@ a {
     font-size: 20px; /* Size of the label text */
     color: #333; /* Dark text color */
     cursor: pointer; /* Pointer cursor when hovering over the label */
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 .container .right {

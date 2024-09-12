@@ -8,6 +8,9 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['login_time'])) {
     header('Location: login.php');
     exit();
 }
+if($_SESSION['role'] !=1){
+    echo "<script>alert('You are not admin');window.location.href='login.php';</script>";
+}
 
 // Handle search query
 $searchKey = isset($_POST['search']) ? trim($_POST['search']) : '';

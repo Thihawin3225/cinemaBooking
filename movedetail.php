@@ -197,7 +197,19 @@ $fullDescription = $movieDetails['description'];
                         <div>
                             <div class="screen">Summary</div>
                             <?php foreach ($groupedSeats as $row_number => $seatsInRow) { ?>
-                                <div class="row"><span class="rpc">Row <?php echo htmlspecialchars($row_number); ?>  $<?php echo htmlspecialchars($seatsInRow[0]['price']); ?></span></div>
+                                <div class="row">
+                                    <span class="rpc">
+                                        Row <?php echo htmlspecialchars($row_number); ?>
+                                          MMK<?php echo htmlspecialchars($seatsInRow[0]['price']); ?> => <?php if($row_number === 1){?>
+                                        <span style="color: #555;">Normal Seat</span> 
+                                    <?php } ?><?php if($row_number === 2){?>
+                                       <span style="color: #555;">Normal Seat</span>
+                                    <?php } ?><?php if($row_number === 3){?>
+                                        <span style="color: #555;"> Couple Seat </span>
+                                    <?php } ?>
+                                </span>
+                                    
+                                </div>
                             <?php } ?>
                         </div>
                         <div class="seat-de">
@@ -205,7 +217,7 @@ $fullDescription = $movieDetails['description'];
                             <div class="bookseatSelectDetail">
                                 <div>Movie Name: <?php echo htmlspecialchars($movieDetails['name']); ?></div>
                                 <div>Seat number is: <span id="selected-seats"></span></div>
-                                <div class="totalPrice">Total Price - $<span id="total-cost">0</span></div>
+                                <div class="totalPrice">Total Price - MMK <span id="total-cost">0</span></div>
                             </div>
                         </div>
                     </div>

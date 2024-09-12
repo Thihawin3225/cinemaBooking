@@ -176,7 +176,7 @@ a {
         <div class="hold-transition login-page" style="background-color: #F8F8F8;">
 <div class="login-box">
   <div class="login-logo">
-    <a href="index2.html">Register</a>
+    <a href="#">Register</a>
   </div>
   <!-- /.login-logo -->
   <div class="card">

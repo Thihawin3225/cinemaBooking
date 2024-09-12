@@ -2,7 +2,9 @@
 session_start();
 require '../config/config.php';
 require '../config/common.php';
-
+if($_SESSION['role'] !=1){
+    echo "<script>alert('You are not admin');window.location.href='login.php';</script>";
+}
 // Check if the user is logged in
 if (empty($_SESSION['user_id']) || empty($_SESSION['login_time'])) {
     header('Location: login.php');

@@ -2,7 +2,9 @@
 session_start();
 require '../config/config.php';
 require '../config/common.php';
-
+if($_SESSION['role'] !=1){
+  echo "<script>alert('You are not admin');window.location.href='login.php';</script>";
+}
 if (!empty($_POST)) {
     if (empty($_POST['name']) || empty($_POST['capacity'])) {
         if (empty($_POST['name'])) {

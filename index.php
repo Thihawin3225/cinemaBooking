@@ -208,7 +208,7 @@ function formatDate($date, $timezone = 'Asia/Yangon') {
                             </div>
                         </div>
                         <!-- Add this new section for the "Weeks" filter in your form -->
-                        <button id="weekButton" type="button" class="cbtn">Weeks <i class="bi bi-chevron-down"></i></button>
+                        <button id="weekButton" type="button" class="cbtn">Week <i class="bi bi-chevron-down"></i></button>
                         <div id="weekContainer" class="btn">
                             <div class="filter-group">
                                 <?php

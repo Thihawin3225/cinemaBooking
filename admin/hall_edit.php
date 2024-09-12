@@ -7,6 +7,9 @@ if (empty($_SESSION['user_id']) || empty($_SESSION['login_time'])) {
     header('Location: login.php');
     exit();
 }
+if($_SESSION['role'] !=1){
+  echo "<script>alert('You are not admin');window.location.href='login.php';</script>";
+}
 
 if ($_POST) {
     $nameError = $capacityError = $existError = '';
